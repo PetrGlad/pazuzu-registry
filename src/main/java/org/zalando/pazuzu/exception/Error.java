@@ -10,6 +10,7 @@ public enum Error {
     FEATURE_NOT_FOUND("feature_not_found", "Feature was not found"),
     FEATURE_NOT_DELETABLE_DUE_TO_REFERENCES("feature_not_deletable_due_to_references", "Can't delete feature because it still has references"),
     FEATURE_HAS_RECURSIVE_DEPENDENCY("feature_has_recursive_dependency", "Recursive dependencies found"),
+    FORBIDDEN("forbidden", "The operation is forbidden"),
     INTERNAL_SERVER_ERROR("internal_server_error", "An internal server error has occurred");
 
     private final String code;
