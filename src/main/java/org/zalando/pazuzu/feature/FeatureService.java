@@ -12,12 +12,11 @@ import org.zalando.pazuzu.feature.tag.TagDto;
 import org.zalando.pazuzu.feature.tag.TagService;
 import org.zalando.pazuzu.sort.TopologicalSortLinear;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.Optional.ofNullable;
 
 @Service
 public class FeatureService {
@@ -57,6 +56,7 @@ public class FeatureService {
         createDependencies(dependencyNames, newFeature);
 
         newFeature.setDockerData(null == dockerData ? "" : dockerData);
+        newFeature.setApproved(false);
 
         if (null != testInstruction) {
             newFeature.setTestInstruction(testInstruction);
@@ -142,6 +142,16 @@ public class FeatureService {
                     "Can't delete feature because it is referenced from other feature(s): " + referencing.stream().map(Feature::getName).collect(Collectors.joining(", ")));
         }
         featureRepository.delete(feature);
+    }
+
+    @Transactional
+    public void approveFeature(String featureName) throws ServiceException {
+        final Optional<Feature> feature = ofNullable(featureRepository.findByName(featureName));
+        if(!feature.isPresent()) {
+            throw new NotFoundException(Error.FEATURE_NOT_FOUND);
+        }
+        feature.get().setApproved(true);
+        featureRepository.save(feature.get());
     }
 
     public Set<Feature> loadFeatures(List<String> dependencyNames) throws ServiceException {
