@@ -44,8 +44,8 @@ public class FeatureService {
 
     @Transactional
     public <T> FeaturesWithTotalCount<T> getFeaturesWithTotalCount(int offset, int limit, Function<Feature, T> converter) {
-        List<T> features = this.featureRepository.getFeatures(offset, limit).stream().map(converter).collect(Collectors.toList());
-        long count = this.featureRepository.count();
+        List<T> features = featureRepository.getFeatures(offset, limit).stream().map(converter).collect(Collectors.toList());
+        long count = featureRepository.count();
         return new FeaturesWithTotalCount<>(features, count);
     }
 
