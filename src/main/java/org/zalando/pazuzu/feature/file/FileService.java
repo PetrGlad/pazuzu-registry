@@ -1,5 +1,7 @@
 package org.zalando.pazuzu.feature.file;
 
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
@@ -20,12 +22,17 @@ import java.util.stream.StreamSupport;
  * TODO use a DB table containing either checksums and source file paths or file contents in BLOBS.
  * Latter simplifies deployment and is likely sufficient for all usecases (no big blobs, little number of records)
  */
+@Service
 public class FileService {
 
     private final Path storageRoot;
 
     public FileService(Path storageRoot) {
         this.storageRoot = storageRoot;
+    }
+
+    public FileService() {
+        this(Paths.get("./pazuzu/files/"));
     }
 
     public Collection<Path> searchFiles(String shellPattern) throws IOException {
@@ -37,13 +44,13 @@ public class FileService {
         }
     }
 
-    public void putFile(Path path, InputStream file) throws IOException {
+    public void putFile(Path path, InputStream content) throws IOException {
         Path realPath = getRealPath(path);
-        Files.createDirectories(realPath.getParent());
-        Files.copy(file, realPath, StandardCopyOption.REPLACE_EXISTING);
+        // TODO (feature) Support nested paths // Files.createDirectories(realPath.getParent());
+        Files.copy(content, realPath, StandardCopyOption.REPLACE_EXISTING);
     }
 
-    public InputStream getContentChannel(Path fileName) throws IOException {
+    public InputStream getContentStream(Path fileName) throws IOException {
         return Files.newInputStream(getRealPath(fileName), StandardOpenOption.READ);
     }
 
@@ -55,6 +62,7 @@ public class FileService {
             // TODO (feature) Support nested paths (see #searchFiles)
             throw new IllegalArgumentException("Nested paths are not supported (yet).");
         }
+        // TODO (security, review) Ensure that ".."s do not allow accessing parent dirs. (_Also_ should not allow them in calls to FileResource)
         return storageRoot.resolve(filePath);
     }
 }

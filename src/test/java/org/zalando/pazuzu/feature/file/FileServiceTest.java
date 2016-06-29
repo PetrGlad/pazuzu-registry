@@ -35,7 +35,7 @@ public class FileServiceTest {
         assertEquals("Can list exact match.",
                 filePath,
                 Iterables.getFirst(fs.searchFiles(filePath.getFileName().toString()), null));
-        try (InputStream in = fs.getContentChannel(filePath)) {
+        try (InputStream in = fs.getContentStream(filePath)) {
             assertEquals("Content is preserved.", content, IOUtils.toString(in, Charsets.UTF_8));
         }
     }
