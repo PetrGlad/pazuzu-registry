@@ -21,7 +21,7 @@ import static org.zalando.pazuzu.exception.Error.INTERNAL_SERVER_ERROR;
 /**
  * Serving list of file available for addition to images.
  * <p>
- * FIXME Filepaths are unsuitable generally as  "/" and filename extensions (suffixes) interfere with spring's request mapping.
+ * FIXME File paths are unsuitable generally as  "/" and filename extensions (suffixes) interfere with spring's request mapping.
  */
 @CrossOrigin
 @RestController
@@ -38,8 +38,8 @@ public class FileResource {
         this.fileService = fileService;
     }
 
-    @RequestMapping(value = "/query/{queryString}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<String> search(@PathVariable String queryString) throws ServiceException {
+    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<String> search(@RequestParam(required = false, name = "q") String queryString) throws ServiceException {
         try {
             return fileService.searchFiles(queryString).stream()
                     .map(Path::toString)
